@@ -17,6 +17,9 @@
                   var href = this.responseText.match(/\/Song\/Download\/[\w\d\?=&;]+/);
                   href = href && href[0] && href[0].replace('amp;','');
                   href && (link.href = href) && (link.style = 'color: green;');
+                  link.onclick = function () {
+                     this.style = 'color: red;';
+                  }.bind(link);
                }
             }.bind(xhttp, link);
             xhttp.open('GET', link.href, true);
