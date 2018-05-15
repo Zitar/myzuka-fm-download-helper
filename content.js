@@ -21,6 +21,10 @@
                return link.firstChild && link.firstChild.tagName === 'IMG';
             },
             downloadHrefRegExp: /\/freedownload\.php\?id=[\d]+/,
+         }, {
+            urlRegExp: /album\/[\d]+\/[\-\w\d]+/g,
+            linksSelector: 'a[href^="/song/"].dl-song',
+            downloadHrefRegExp: /\/song\/dl\/\d+\/[\d\w]+\/\d+/,
          }
       ],
       unit,
