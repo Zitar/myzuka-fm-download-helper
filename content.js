@@ -30,7 +30,40 @@
       unit,
       urlMatch,
       links,
-      link;
+      $baseLink;
+
+   function getParentElementByAttribute($el, attrName) {
+      if ($el.getAttribute(attrName))
+         return $el;
+      if ($el.parentElement) {
+         return getParentElementByAttribute($el.parentElement, attrName);
+      }
+      return $el;
+   }
+
+   function getChildAttributeValue($el, attrName) {
+      var children = $el.children,
+         $child,
+         val;
+      for (var i = 0, len = children.length; i < len; i++) {
+         $child = children[i];
+         val = $child.getAttribute(attrName) || getChildAttributeValue($child, attrName);
+         if (!!val)
+            return val;
+      }
+      return null;
+   }
+
+   function numToStr(val) {
+      return (val < 10 ? '0' : '') + val;
+   }
+
+   function setNewDownloadName($link) {
+      var $rootEl = getParentElementByAttribute($link, 'data-name'),
+         songName = $rootEl.getAttribute('data-name'),
+         songNum = numToStr(getChildAttributeValue($rootEl, 'data-position'));
+      songName && songNum && $link.setAttribute('download', songNum + ' - ' + songName);
+   }
 
    for (var i = 0, len = units.length; i < len; i++) {
       unit = units[i];
@@ -38,20 +71,21 @@
       if (urlMatch && urlMatch[0]) {
          links = document.querySelectorAll(unit.linksSelector);
          for(var j = 0, linksLen = links.length; j < linksLen; j++) {
-            link = links[j];
-            if (unit.linkCheck === undefined || unit.linkCheck(link)) {
+            $baseLink = links[j];
+            if (unit.linkCheck === undefined || unit.linkCheck($baseLink)) {
                var xhttp = new XMLHttpRequest();
-               xhttp.onreadystatechange = function (unit, link) {
+               xhttp.onreadystatechange = function (unit, $link) {
                   if (this.status === 200 && (unit.readyResultCheck === undefined || unit.readyResultCheck(this))) {
                      var href = this.responseText.match(unit.downloadHrefRegExp);
                      href = unit.hrefModify ? unit.hrefModify(href) : href;
-                     href && (link.href = href) && (link.innerHTML = 'Скачать') && (link.style = 'color: green;');
-                     link.onclick = function () {
+                     href && ($link.href = href) && ($link.innerHTML = 'Скачать') && ($link.style = 'color: green;');
+                     setNewDownloadName($link);
+                     $link.onclick = function () {
                         this.style = 'color: red;';
-                     }.bind(link);
+                     }.bind($link);
                   }
-               }.bind(xhttp, unit, link);
-               xhttp.open('GET', link.href, true);
+               }.bind(xhttp, unit, $baseLink);
+               xhttp.open('GET', $baseLink.href, true);
                xhttp.send();
             }
          }

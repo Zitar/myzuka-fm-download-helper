@@ -1,7 +1,7 @@
 {
    "manifest_version": 2,
    "name": "Myzuka.fm download helper",
-   "version": "2.1",
+   "version": "2.2",
 
    "icons": {
       "16": "icon.png",
@@ -13,7 +13,8 @@
       "matches": ["*://*.myzuka.me/*",
                     "*://*.imyz.me/*",
                     "*://jetune.fm/*",
-                    "*://myzcloud.me/*"
+                    "*://myzcloud.me/*",
+                    "*://myzcloud.club/*"
                 ],
       "js": ["content.js"],
       "css": []
