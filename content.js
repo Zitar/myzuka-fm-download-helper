@@ -2,15 +2,15 @@
    var
       units = [
          {
-            urlRegExp: /Album\/[\d]+/g,
-            linksSelector: 'a[href^="/Song/"]',
+            urlRegExp: /[A,a]lbum\/[\d]+/g,
+            linksSelector: 'a[href*="/song/"]',
             linkCheck: function (link) {
-               return link.innerText === 'СКАЧАТЬ';
+               return ((link.title || '').match(/Download|Скачать/) || '').length;
             },
             readyResultCheck: function (xhttp) {
                return xhttp.readyState === 4;
             },
-            downloadHrefRegExp: /\/Song\/Download\/[\w\d\?=&;]+/,
+            downloadHrefRegExp: /song\/dl\/[\d\w\/]*/,
             hrefModify: function (href) {
                return href && href[0] && href[0].replace('amp;','');
             }
@@ -78,7 +78,7 @@
                   if (this.status === 200 && (unit.readyResultCheck === undefined || unit.readyResultCheck(this))) {
                      var href = this.responseText.match(unit.downloadHrefRegExp);
                      href = unit.hrefModify ? unit.hrefModify(href) : href;
-                     href && ($link.href = href) && ($link.innerHTML = 'Скачать') && ($link.style = 'color: green;');
+                     href && ($link.href = document.location.origin + '/' + href) && ($link.innerHTML = 'Скачать') && ($link.style = 'color: green;');
                      setNewDownloadName($link);
                      $link.onclick = function () {
                         this.style = 'color: red;';
